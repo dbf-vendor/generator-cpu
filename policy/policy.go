@@ -1,4 +1,4 @@
-package main
+package policy
 
 import (
 	"bufio"
@@ -19,7 +19,7 @@ var (
 	argHashcat []string
 )
 
-func main() {
+func Main() {
 	cracker += global.EXT
 	cracker = global.CURRENT_PATH + cracker
 	maskFileName = global.CURRENT_PATH + maskFileName
