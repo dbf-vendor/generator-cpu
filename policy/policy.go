@@ -2,8 +2,8 @@ package main
 
 import (
 	"bufio"
-	"github.com/dbf-vendor/generator-gpu/global"
-	"github.com/dbf-vendor/generator-gpu/policy/base"
+	"github.com/dbf-vendor/generator-cpu/global"
+	"github.com/dbf-vendor/generator-cpu/policy/base"
 	"log"
 	"math/big"
 	"os"

@@ -1,7 +1,7 @@
 package general
 
 import (
-	"github.com/dbf-vendor/generator-gpu/global"
+	"github.com/dbf-vendor/generator-cpu/global"
 	"log"
 	"os"
 	"os/exec"

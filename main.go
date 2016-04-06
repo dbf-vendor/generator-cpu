@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/dbf-vendor/generator-gpu/general"
-	"github.com/dbf-vendor/generator-gpu/global"
-	"github.com/dbf-vendor/generator-gpu/policy"
+	"github.com/dbf-vendor/generator-cpu/general"
+	"github.com/dbf-vendor/generator-cpu/global"
+	"github.com/dbf-vendor/generator-cpu/policy"
 	"os"
 )
 
