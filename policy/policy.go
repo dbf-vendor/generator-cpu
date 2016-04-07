@@ -360,9 +360,8 @@ func Main() {
 				}
 			}
 
+			var argSkipLimit []string
 			if skip.Cmp(zeroInt) > 0 { // Calculate proper mask for skip
-				var argSkipLimit []string
-
 				for l := 0; l < incrementMin; l++ {
 					for ic := 0; ic < 4; ic++ {
 						if base.MaskInfo[l].Len[base.CHARSETS[ic]] > 0 {
@@ -380,34 +379,34 @@ func Main() {
 						}
 					}
 				}
+			}
 
+			if skip.Cmp(zeroInt) > 0 {
+				argSkipLimit = append(argSkipLimit, "-s", skip.String())
+			}
+
+			if limit.Cmp(zeroInt) > 0 {
 				if skip.Cmp(zeroInt) > 0 {
-					argSkipLimit = append(argSkipLimit, "-s", skip.String())
+					limit.Add(limit, skip)
 				}
+				if limit.Cmp(combination) < 0 {
+					argSkipLimit = append(argSkipLimit, "-l", limit.String())
 
-				if limit.Cmp(zeroInt) > 0 {
-					if skip.Cmp(zeroInt) > 0 {
-						limit.Add(limit, skip)
-					}
-					if limit.Cmp(combination) < 0 {
-						argSkipLimit = append(argSkipLimit, "-l", limit.String())
-
-						incrementMax-- // End execution
-					} else if limit.Cmp(combination) == 0 {
-						incrementMax-- // End execution
-					} else {
-						limit.Sub(limit, combination)
-					}
+					incrementMax-- // End execution
+				} else if limit.Cmp(combination) == 0 {
+					incrementMax-- // End execution
+				} else {
+					limit.Sub(limit, combination)
 				}
+			}
 
-				skipped = true
-				cmd := exec.Command(cracker, append(argHashcat, append(argSkipLimit, base.GetMask(incrementMin, &posMask))...)...)
-				cmd.Stdout = os.Stdout
-				cmd.Stderr = os.Stderr
-				err := cmd.Run()
-				if err != nil {
-					log.Printf("%s\n", err)
-				}
+			skipped = true
+			cmd := exec.Command(cracker, append(argHashcat, append(argSkipLimit, base.GetMask(incrementMin, &posMask))...)...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			err := cmd.Run()
+			if err != nil {
+				log.Printf("%s\n", err)
 			}
 		}
 
@@ -548,9 +547,15 @@ func Main() {
 				}
 			}
 
-			maskWriter.Flush()
+			err = maskWriter.Flush()
+			if err != nil {
+				log.Printf("%s\n", err)
+			}
 
-			maskFile.Close()
+			err = maskFile.Close()
+			if err != nil {
+				log.Printf("%s\n", err)
+			}
 
 			cmd := exec.Command(cracker, append(argHashcat, maskFileName)...)
 			cmd.Stdout = os.Stdout
