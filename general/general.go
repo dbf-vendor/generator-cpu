@@ -16,6 +16,7 @@ func Main() {
 
 	cmd := exec.Command(cracker, os.Args[1:]...)
 	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	if err != nil {
 		log.Printf("%s\n", err)
