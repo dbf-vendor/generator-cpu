@@ -360,7 +360,8 @@ func Main() {
 				}
 			}
 
-			if skip.Cmp(zeroInt) > 0 { // Calculate proper mask for skip
+			/* Calculate proper mask for skip */
+			if skip.Cmp(zeroInt) > 0 {
 				for l := 0; l < incrementMin; l++ {
 					for ic := 0; ic < 4; ic++ {
 						if base.MaskInfo[l].Len[base.CHARSETS[ic]] > 0 {
@@ -380,11 +381,13 @@ func Main() {
 				}
 			}
 
+			/* Execute skip and limit */
 			if skip.Cmp(zeroInt) > 0 {
+				skipped = true
+
 				var argSkipLimit []string
 
 				argSkipLimit = append(argSkipLimit, "-s", skip.String())
-				skipped = true
 
 				if limit.Cmp(zeroInt) > 0 {
 					if skip.Cmp(zeroInt) > 0 {
@@ -394,23 +397,19 @@ func Main() {
 						argSkipLimit = append(argSkipLimit, "-l", limit.String())
 
 						incrementMax-- // End execution
-						skipped = true
 					} else if limit.Cmp(combination) == 0 {
 						incrementMax-- // End execution
-						skipped = true
 					} else {
 						limit.Sub(limit, combination)
 					}
 				}
 
-				if skipped {
-					cmd := exec.Command(cracker, append(argHashcat, append(argSkipLimit, base.GetMask(incrementMin, &posMask))...)...)
-					cmd.Stdout = os.Stdout
-					cmd.Stderr = os.Stderr
-					err := cmd.Run()
-					if err != nil {
-						log.Printf("%s\n", err)
-					}
+				cmd := exec.Command(cracker, append(argHashcat, append(argSkipLimit, base.GetMask(incrementMin, &posMask))...)...)
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+				err := cmd.Run()
+				if err != nil {
+					log.Printf("%s\n", err)
 				}
 			}
 		}
@@ -464,9 +463,8 @@ func Main() {
 									combination.Mul(combination, big.NewInt(int64(base.MaskInfo[j].Len[maskCharset[j][maskPos[j]]])))
 								}
 								if limit.Cmp(combination) < 0 { // Calculate limit and execute it separately
-									l = 0 // Break parent loop
-									incrementMax = i
-									i++ // Break parent of parent loop
+									l = 0                // Break parent loop
+									i = incrementMax + 1 // Break parent of parent loop
 									break
 								} else { // Is in limit range
 									maskWriter.WriteString(strings.Join(mask, "") + "\n")
